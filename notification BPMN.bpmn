@@ -139,13 +139,14 @@
       <bpmn:outgoing>Flow_0nnesj4</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_1ie54le" name="Visual indicator" sourceRef="Gateway_0rv2tqg" targetRef="Gateway_0f0sukz">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${eventType=="aqi"}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${eventType == "aqi"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0nnesj4" name="empty" sourceRef="Gateway_0rv2tqg" targetRef="Activity_1rbnpqh" />
     <bpmn:userTask id="Activity_1eso19u" name="Find subscribers">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="FormField_1bpfe04" label="email" type="string" />
+          <camunda:formField id="SetSubscriber" label="Set subscriber" type="string" defaultValue="Lars Larsen" />
+          <camunda:formField id="email" label="SetEmail" type="boolean" defaultValue="true" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0wj2h0k</bpmn:incoming>
