@@ -1,0 +1,65 @@
+@App:name("NotificationServiceProcess")
+@App:description("Listens and processes events from visual indicators")
+
+-- Input stream
+@source(type='http', receiver.url='http://localhost:8081/pollutionDataInput', @map(type='json')) 
+@sink(type='log')
+define stream PollutionDataInput(id int, longitude double,  latitude double, datetime string, aqi double);
+
+
+-- Output stream
+@sink(type='http', publisher.url ='http://127.0.0.1:8080/engine-rest/message', headers="'Host:127.0.0.1:8080'", @map(type='json', @payload("""{
+    "processVariables": {
+        "id": {
+            "value":"{{id}}",
+            "type":"String"
+        },
+        "longitude": {
+            "value":"{{longitude}}",
+            "type":"String"
+        },
+        "latitude": {
+            "value":"{{latitude}}",
+            "type":"String"
+        },
+        "datetime": {
+            "value":"{{datetime}}",
+            "type":"String"
+        }, 
+        "aqi": {
+            "value":"{{aqi}}",
+            "type":"String"
+        },
+        "level": {
+            "value":"{{level}}",
+            "type":"String"
+        },
+        "eventType": {
+            "value":"{{eventType}}",
+            "type":"String"
+        }
+    },
+    "messageName":"{{messageName}}"
+    }""")
+))
+define stream PollutionDataOutput(id int, longitude double, latitude double, datetime string, aqi double,  level string, messageName string, eventType string);
+
+
+-- Queries
+@info(name='Highpollution query')
+from PollutionDataInput [aqi >= 150]
+select id, longitude, latitude, datetime, aqi, "high" as level, "StartMessage" as messageName, "aqi" as eventType
+insert into PollutionDataOutput;
+
+@info(name='MediumPollution query')
+from PollutionDataInput [aqi >= 51 and aqi <= 149]
+select id, longitude, latitude, datetime, aqi, "medium" as level, "StartMessage" as messageName, "aqi" as eventType
+insert into PollutionDataOutput;
+
+@info(name='LowPollution query')
+from PollutionDataInput [aqi <= 50]
+select id, longitude, latitude, datetime, aqi, "low" as level, "StartMessage" as messageName, "aqi" as eventType
+insert into PollutionDataOutput;
+
+
+    
