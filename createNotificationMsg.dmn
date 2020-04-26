@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/DMN/20151101/dmn.xsd" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="Definitions_1r2bkr8" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="3.7.2">
+  <decision id="Decision_17ppbhb" name="Decision 1">
+    <extensionElements>
+      <biodi:bounds x="150" y="150" width="180" height="80" />
+    </extensionElements>
+    <decisionTable id="decisionTable_1">
+      <input id="input_1" label="level" camunda:inputVariable="level">
+        <inputExpression id="inputExpression_1" typeRef="string">
+          <text>level</text>
+        </inputExpression>
+      </input>
+      <output id="output_1" label="message" name="message" typeRef="string" />
+      <rule id="DecisionRule_18ggb05">
+        <inputEntry id="UnaryTests_07kzk2z">
+          <text>"low"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1j1a3rp">
+          <text>"This visual indicators air pollution has changed to low"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1jy7uc6">
+        <inputEntry id="UnaryTests_0rbh23l">
+          <text>"medium"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_12fuga2">
+          <text>"This visual indicators air pollution has changed to medium"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1e49fze">
+        <inputEntry id="UnaryTests_1cchakk">
+          <text>"high"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_133amha">
+          <text>"This visual indicators air pollution has changed to high"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>
