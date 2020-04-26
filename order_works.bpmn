@@ -89,16 +89,6 @@
       <bpmn:outgoing>Flow_0f4gxuh</bpmn:outgoing>
       <bpmn:outgoing>Flow_0kvankx</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_07x4e8o" sourceRef="Activity_1y0k5dq" targetRef="Gateway_1ajwd8z" />
-    <bpmn:userTask id="Activity_1y0k5dq" name="Check is repaired before">
-      <bpmn:extensionElements>
-        <camunda:formData>
-          <camunda:formField id="repaired" label="Is repaired before" type="boolean" defaultValue="false" />
-        </camunda:formData>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0qvzpt4</bpmn:incoming>
-      <bpmn:outgoing>Flow_07x4e8o</bpmn:outgoing>
-    </bpmn:userTask>
     <bpmn:userTask id="Activity_0q7aptd" name="Attempt to repair indicator">
       <bpmn:extensionElements>
         <camunda:formData>
@@ -110,6 +100,11 @@
     </bpmn:userTask>
     <bpmn:sequenceFlow id="Flow_0llf2no" sourceRef="Event_1smuuu1" targetRef="Activity_1bj1ob3" />
     <bpmn:startEvent id="Event_1smuuu1" name="Revieve booking">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="repaired" type="boolean" defaultValue="false" />
+        </camunda:formData>
+      </bpmn:extensionElements>
       <bpmn:outgoing>Flow_0llf2no</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_1lfnxjp" messageRef="Message_0su4rj6" />
     </bpmn:startEvent>
@@ -121,6 +116,16 @@
       <bpmn:incoming>Flow_10rh8kl</bpmn:incoming>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_0kg6xdo" errorRef="Error_035gcir" />
     </bpmn:endEvent>
+    <bpmn:userTask id="Activity_1y0k5dq" name="Check is repaired before">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="repaired" label="Is repaired before" type="boolean" defaultValue="false" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0qvzpt4</bpmn:incoming>
+      <bpmn:outgoing>Flow_07x4e8o</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_07x4e8o" sourceRef="Activity_1y0k5dq" targetRef="Gateway_1ajwd8z" />
   </bpmn:process>
   <bpmn:process id="Order_service" isExecutable="true">
     <bpmn:endEvent id="Event_1ad3cey" name="Send out of stock email">
@@ -141,7 +146,7 @@
       <bpmn:incoming>Flow_0fyj5og</bpmn:incoming>
       <bpmn:outgoing>Flow_1buochp</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_1y726oa">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1M</bpmn:timeDuration>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P7D</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
     <bpmn:endEvent id="Event_1h25lbu" name="Order cancelled due&#10; to missing payment">
@@ -167,7 +172,6 @@
       <bpmn:outgoing>Flow_1h8slva</bpmn:outgoing>
       <bpmn:outgoing>Flow_0wprhat</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_1y0auzh" sourceRef="Gateway_18gqpb7" targetRef="Activity_0a6k655" />
     <bpmn:sequenceFlow id="Flow_0a8lp0t" sourceRef="Activity_0a6k655" targetRef="Gateway_1l7gdgc" />
     <bpmn:sequenceFlow id="Flow_042z35m" name="Not in stock" sourceRef="Gateway_1l7gdgc" targetRef="Event_1ad3cey">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${CheckInventory==false}</bpmn:conditionExpression>
@@ -232,7 +236,15 @@
       <bpmn:outgoing>Flow_042z35m</bpmn:outgoing>
       <bpmn:outgoing>Flow_19vmo03</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_1x3ncv0" sourceRef="Activity_0t6qicf" targetRef="Gateway_1n91r5j" />
+    <bpmn:startEvent id="Event_0qafghb">
+      <bpmn:outgoing>Flow_0uyltyt</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_01qj8q0" messageRef="Message_03564yo" />
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_13y1aka" name="Notify customer of failed installtion">
+      <bpmn:incoming>Flow_0ojrinx</bpmn:incoming>
+      <bpmn:outgoing>Flow_1q8kys8</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1y0auzh" sourceRef="Gateway_18gqpb7" targetRef="Activity_0a6k655" />
     <bpmn:userTask id="Activity_0t6qicf" name="Is bill payed before">
       <bpmn:extensionElements>
         <camunda:formData>
@@ -242,23 +254,29 @@
       <bpmn:incoming>Flow_19vmo03</bpmn:incoming>
       <bpmn:outgoing>Flow_1x3ncv0</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:startEvent id="Event_0qafghb">
-      <bpmn:outgoing>Flow_0uyltyt</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_01qj8q0" messageRef="Message_03564yo" />
-    </bpmn:startEvent>
-    <bpmn:task id="Activity_11w9ib3" name="Confirm order with bill">
+    <bpmn:sequenceFlow id="Flow_1x3ncv0" sourceRef="Activity_0t6qicf" targetRef="Gateway_1n91r5j" />
+    <bpmn:serviceTask id="Activity_11w9ib3" name="Confirm order with bill">
       <bpmn:extensionElements>
         <camunda:properties>
           <camunda:property name="type" value="confirm" />
         </camunda:properties>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">http://localhost:8081/bill</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">{"price" : ${amount}, "instanceID" : "${execution.getProcessInstanceId()}"}</camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1h8slva</bpmn:incoming>
       <bpmn:outgoing>Flow_03o54rq</bpmn:outgoing>
-    </bpmn:task>
-    <bpmn:task id="Activity_13y1aka" name="Notify customer of failed installtion">
-      <bpmn:incoming>Flow_0ojrinx</bpmn:incoming>
-      <bpmn:outgoing>Flow_1q8kys8</bpmn:outgoing>
-    </bpmn:task>
+    </bpmn:serviceTask>
     <bpmn:textAnnotation id="TextAnnotation_16ryrl5">
       <bpmn:text>For each item</bpmn:text>
     </bpmn:textAnnotation>
@@ -357,10 +375,6 @@
       <bpmndi:BPMNShape id="Gateway_18gqpb7_di" bpmnElement="Gateway_18gqpb7" isMarkerVisible="true">
         <dc:Bounds x="225" y="655" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_1y0auzh_di" bpmnElement="Flow_1y0auzh">
-        <di:waypoint x="275" y="680" />
-        <di:waypoint x="310" y="680" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Gateway_1l7gdgc_di" bpmnElement="Gateway_1l7gdgc" isMarkerVisible="true">
         <dc:Bounds x="435" y="655" width="50" height="50" />
       </bpmndi:BPMNShape>
@@ -573,20 +587,6 @@
       <bpmndi:BPMNShape id="Activity_019ybw2_di" bpmnElement="Activity_08ifz4e">
         <dc:Bounds x="820" y="300" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_1x3ncv0_di" bpmnElement="Flow_1x3ncv0">
-        <di:waypoint x="610" y="630" />
-        <di:waypoint x="635" y="630" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Activity_1yquu5n_di" bpmnElement="Activity_0t6qicf">
-        <dc:Bounds x="510" y="590" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_07x4e8o_di" bpmnElement="Flow_07x4e8o">
-        <di:waypoint x="890" y="130" />
-        <di:waypoint x="915" y="130" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Activity_0htjo7h_di" bpmnElement="Activity_1y0k5dq">
-        <dc:Bounds x="790" y="90" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0oqsmxm_di" bpmnElement="Activity_0q7aptd">
         <dc:Bounds x="1090" y="90" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -619,11 +619,29 @@
       <bpmndi:BPMNShape id="Event_0tr8zeg_di" bpmnElement="Event_10jswj4">
         <dc:Bounds x="1162" y="212" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0ubsx8k_di" bpmnElement="Activity_11w9ib3">
-        <dc:Bounds x="720" y="590" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0t8opfm_di" bpmnElement="Activity_13y1aka">
         <dc:Bounds x="1560" y="750" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1y0auzh_di" bpmnElement="Flow_1y0auzh">
+        <di:waypoint x="275" y="680" />
+        <di:waypoint x="310" y="680" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_1yquu5n_di" bpmnElement="Activity_0t6qicf">
+        <dc:Bounds x="510" y="590" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1x3ncv0_di" bpmnElement="Flow_1x3ncv0">
+        <di:waypoint x="610" y="630" />
+        <di:waypoint x="635" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_0htjo7h_di" bpmnElement="Activity_1y0k5dq">
+        <dc:Bounds x="790" y="90" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_07x4e8o_di" bpmnElement="Flow_07x4e8o">
+        <di:waypoint x="890" y="130" />
+        <di:waypoint x="915" y="130" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_0gyncy4_di" bpmnElement="Activity_11w9ib3">
+        <dc:Bounds x="720" y="590" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
