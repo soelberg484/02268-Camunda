@@ -227,12 +227,6 @@
   <bpmn:message id="Message_1as9mf1" name="EmailMessage" />
   <bpmn:process id="Process_1wrscg2" isExecutable="false" />
   <bpmn:process id="Process_1tfkjxo" name="lower_notification" isExecutable="true">
-    <bpmn:exclusiveGateway id="Gateway_1c1g6kt" name="What is the pollution level?">
-      <bpmn:incoming>Flow_0prtgzo</bpmn:incoming>
-      <bpmn:outgoing>Flow_1jaum55</bpmn:outgoing>
-      <bpmn:outgoing>Flow_1s3rvnc</bpmn:outgoing>
-      <bpmn:outgoing>Flow_1wsgotq</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
     <bpmn:task id="Activity_1ly1w3r" name="Send in-app notification">
       <bpmn:incoming>Flow_002jz33</bpmn:incoming>
       <bpmn:outgoing>Flow_08sp1qw</bpmn:outgoing>
@@ -312,11 +306,6 @@
         <bpmn:outgoing>Flow_0c5t5cl</bpmn:outgoing>
       </bpmn:userTask>
     </bpmn:subProcess>
-    <bpmn:exclusiveGateway id="Gateway_1ncudwc" name="Has the pollution level been high in the last 24 hours?">
-      <bpmn:incoming>Flow_0r9l2kn</bpmn:incoming>
-      <bpmn:outgoing>Flow_1up7xtc</bpmn:outgoing>
-      <bpmn:outgoing>Flow_0pqwkhz</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
     <bpmn:task id="Activity_1rlzk6b" name="send push notification">
       <bpmn:incoming>Flow_1up7xtc</bpmn:incoming>
       <bpmn:outgoing>Flow_0rsrr3k</bpmn:outgoing>
@@ -487,23 +476,7 @@
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_0o241tn" sourceRef="Event_0yitnq5" targetRef="Activity_0jbqw9v" />
     <bpmn:sequenceFlow id="Flow_16l0zbu" sourceRef="Event_031a6kw" targetRef="Activity_0zh2ue6" />
-    <bpmn:startEvent id="Event_031a6kw" name="Receive forecast">
-      <bpmn:outgoing>Flow_16l0zbu</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_1t6sn6l" messageRef="Message_0qrubrz" />
-    </bpmn:startEvent>
-    <bpmn:startEvent id="Event_16uy4ot" name="Receive area event">
-      <bpmn:outgoing>Flow_13597rw</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_12u1f5k" messageRef="Message_0at41uu" />
-    </bpmn:startEvent>
-    <bpmn:startEvent id="Event_0yitnq5" name="Receive route notification message">
-      <bpmn:outgoing>Flow_0o241tn</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_08mj2hl" messageRef="Message_044tiyo" />
-    </bpmn:startEvent>
-    <bpmn:startEvent id="Event_1hipbwf" name="Receive visual indicator notification message">
-      <bpmn:outgoing>Flow_0prtgzo</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_16xbfk4" messageRef="Message_1auuh8d" />
-    </bpmn:startEvent>
-    <bpmn:sequenceFlow id="Flow_0prtgzo" sourceRef="Event_1hipbwf" targetRef="Gateway_1c1g6kt" />
+    <bpmn:sequenceFlow id="Flow_0prtgzo" sourceRef="Event_1hipbwf" targetRef="Activity_1g5q2x8" />
     <bpmn:sequenceFlow id="Flow_19zyki8" sourceRef="Gateway_08qpndk" targetRef="Activity_0c930cb" />
     <bpmn:exclusiveGateway id="Gateway_1fs8lde" name="Is one route a favorite route?">
       <bpmn:incoming>Flow_16ceqv2</bpmn:incoming>
@@ -570,6 +543,17 @@
       <bpmn:outgoing>Flow_1cf0jqu</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="Flow_0r9l2kn" sourceRef="Activity_0wn2vqq" targetRef="Gateway_1ncudwc" />
+    <bpmn:startEvent id="Event_1hipbwf" name="Receive visual indicator notification message">
+      <bpmn:outgoing>Flow_0prtgzo</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_16xbfk4" messageRef="Message_1auuh8d" />
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_163cu3z" sourceRef="Activity_1g5q2x8" targetRef="Gateway_1c1g6kt" />
+    <bpmn:exclusiveGateway id="Gateway_1c1g6kt" name="What is the pollution level?">
+      <bpmn:incoming>Flow_163cu3z</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jaum55</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1s3rvnc</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1wsgotq</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
     <bpmn:userTask id="Activity_0wn2vqq" name="Has pollution been high last 24 hours (dummy)">
       <bpmn:extensionElements>
         <camunda:formData>
@@ -579,6 +563,32 @@
       <bpmn:incoming>Flow_1s3rvnc</bpmn:incoming>
       <bpmn:outgoing>Flow_0r9l2kn</bpmn:outgoing>
     </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_1ncudwc" name="Has the pollution level been high in the last 24 hours?">
+      <bpmn:incoming>Flow_0r9l2kn</bpmn:incoming>
+      <bpmn:outgoing>Flow_1up7xtc</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0pqwkhz</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Activity_1g5q2x8" name="Pollution level">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="level" type="string" defaultValue="medium" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0prtgzo</bpmn:incoming>
+      <bpmn:outgoing>Flow_163cu3z</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:startEvent id="Event_0yitnq5" name="Receive route notification message">
+      <bpmn:outgoing>Flow_0o241tn</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_08mj2hl" messageRef="Message_044tiyo" />
+    </bpmn:startEvent>
+    <bpmn:startEvent id="Event_031a6kw" name="Receive forecast">
+      <bpmn:outgoing>Flow_16l0zbu</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1t6sn6l" messageRef="Message_0qrubrz" />
+    </bpmn:startEvent>
+    <bpmn:startEvent id="Event_16uy4ot" name="Receive area event">
+      <bpmn:outgoing>Flow_13597rw</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_12u1f5k" messageRef="Message_0at41uu" />
+    </bpmn:startEvent>
     <bpmn:textAnnotation id="TextAnnotation_03dbnqx">
       <bpmn:text>For each route</bpmn:text>
     </bpmn:textAnnotation>
@@ -811,9 +821,9 @@
         <dc:Bounds x="140" y="1400" width="2461" height="1290" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1c1g6kt_di" bpmnElement="Gateway_1c1g6kt" isMarkerVisible="true">
-        <dc:Bounds x="626" y="1575" width="50" height="50" />
+        <dc:Bounds x="665" y="1575" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="664" y="1606" width="73" height="27" />
+          <dc:Bounds x="699" y="1606" width="73" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_00c7n6w_di" bpmnElement="Gateway_00c7n6w" isMarkerVisible="true">
@@ -928,9 +938,9 @@
         <dc:Bounds x="821" y="1860" width="490" height="260" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1ncudwc_di" bpmnElement="Gateway_1ncudwc" isMarkerVisible="true">
-        <dc:Bounds x="751" y="1425" width="50" height="50" />
+        <dc:Bounds x="786" y="1435" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="807" y="1430" width="87" height="40" />
+          <dc:Bounds x="842" y="1440" width="87" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1rlzk6b_di" bpmnElement="Activity_1rlzk6b">
@@ -1051,7 +1061,7 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_13597rw_di" bpmnElement="Flow_13597rw">
-        <di:waypoint x="468" y="2240" />
+        <di:waypoint x="378" y="2240" />
         <di:waypoint x="531" y="2240" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1ba1l0w_di" bpmnElement="Flow_1ba1l0w">
@@ -1137,20 +1147,20 @@
         <di:waypoint x="1076" y="1510" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1up7xtc_di" bpmnElement="Flow_1up7xtc">
-        <di:waypoint x="776" y="1475" />
-        <di:waypoint x="776" y="1510" />
+        <di:waypoint x="811" y="1485" />
+        <di:waypoint x="811" y="1510" />
         <di:waypoint x="901" y="1510" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="853" y="1493" width="17" height="14" />
+          <dc:Bounds x="864" y="1493" width="17" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0pqwkhz_di" bpmnElement="Flow_0pqwkhz">
-        <di:waypoint x="776" y="1475" />
-        <di:waypoint x="776" y="1410" />
+        <di:waypoint x="830" y="1454" />
+        <di:waypoint x="830" y="1410" />
         <di:waypoint x="1101" y="1410" />
         <di:waypoint x="1101" y="1485" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1083" y="1443" width="15" height="14" />
+          <dc:Bounds x="1072" y="1453" width="15" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_05oa4l0_di" bpmnElement="Flow_05oa4l0">
@@ -1173,25 +1183,25 @@
         <di:waypoint x="953" y="1790" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1jaum55_di" bpmnElement="Flow_1jaum55">
-        <di:waypoint x="651" y="1625" />
-        <di:waypoint x="651" y="1790" />
+        <di:waypoint x="690" y="1625" />
+        <di:waypoint x="690" y="1790" />
         <di:waypoint x="761" y="1790" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="655" y="1685" width="23" height="14" />
+          <dc:Bounds x="694" y="1685" width="23" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1s3rvnc_di" bpmnElement="Flow_1s3rvnc">
-        <di:waypoint x="651" y="1575" />
-        <di:waypoint x="651" y="1490" />
+        <di:waypoint x="690" y="1575" />
+        <di:waypoint x="690" y="1500" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="656" y="1546" width="22" height="14" />
+          <dc:Bounds x="695" y="1542" width="22" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1wsgotq_di" bpmnElement="Flow_1wsgotq">
-        <di:waypoint x="676" y="1600" />
+        <di:waypoint x="715" y="1600" />
         <di:waypoint x="810" y="1600" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="725" y="1582" width="40" height="14" />
+          <dc:Bounds x="760" y="1582" width="40" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_1phj8bq_di" bpmnElement="Association_1phj8bq">
@@ -1254,26 +1264,26 @@
       <bpmndi:BPMNEdge id="MessageFlow_1wtrh42_di" bpmnElement="MessageFlow_1wtrh42">
         <di:waypoint x="1410" y="770" />
         <di:waypoint x="1410" y="1350" />
-        <di:waypoint x="510" y="1340" />
-        <di:waypoint x="510" y="1582" />
+        <di:waypoint x="490" y="1350" />
+        <di:waypoint x="490" y="1582" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="MessageFlow_1vim38f_di" bpmnElement="MessageFlow_1vim38f">
         <di:waypoint x="1150" y="880" />
-        <di:waypoint x="1150" y="1395" />
-        <di:waypoint x="569" y="1395" />
-        <di:waypoint x="569" y="1932" />
+        <di:waypoint x="1150" y="1330" />
+        <di:waypoint x="419" y="1330" />
+        <di:waypoint x="419" y="1932" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="MessageFlow_1mm2psm_di" bpmnElement="MessageFlow_1mm2psm">
         <di:waypoint x="1010" y="990" />
         <di:waypoint x="1010" y="1310" />
-        <di:waypoint x="450" y="1310" />
-        <di:waypoint x="450" y="2220" />
+        <di:waypoint x="360" y="1310" />
+        <di:waypoint x="360" y="2220" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="MessageFlow_0kyua9m_di" bpmnElement="MessageFlow_0kyua9m">
         <di:waypoint x="850" y="1260" />
         <di:waypoint x="850" y="1280" />
-        <di:waypoint x="340" y="1280" />
-        <di:waypoint x="340" y="2462" />
+        <di:waypoint x="310" y="1280" />
+        <di:waypoint x="310" y="2462" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_05sbnor_di" bpmnElement="StartEvent_1">
         <dc:Bounds x="202" y="922" width="36" height="36" />
@@ -1339,40 +1349,40 @@
         <dc:Bounds x="1340" y="1950" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1ddlwqr_di" bpmnElement="Event_0yitnq5">
-        <dc:Bounds x="552" y="1932" width="36" height="36" />
+        <dc:Bounds x="402" y="1932" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="536" y="1975" width="68" height="40" />
+          <dc:Bounds x="386" y="1975" width="68" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0o241tn_di" bpmnElement="Flow_0o241tn">
-        <di:waypoint x="588" y="1950" />
+        <di:waypoint x="438" y="1950" />
         <di:waypoint x="631" y="1950" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_17mxmsh_di" bpmnElement="Event_16uy4ot">
-        <dc:Bounds x="432" y="2222" width="36" height="36" />
+        <dc:Bounds x="342" y="2222" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="418" y="2265" width="65" height="27" />
+          <dc:Bounds x="328" y="2265" width="65" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_13fpj68_di" bpmnElement="Event_031a6kw">
-        <dc:Bounds x="322" y="2462" width="36" height="36" />
+        <dc:Bounds x="292" y="2462" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="299" y="2505" width="83" height="14" />
+          <dc:Bounds x="269" y="2505" width="83" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_16l0zbu_di" bpmnElement="Flow_16l0zbu">
-        <di:waypoint x="358" y="2480" />
+        <di:waypoint x="328" y="2480" />
         <di:waypoint x="520" y="2480" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_1mv6c96_di" bpmnElement="Event_1hipbwf">
-        <dc:Bounds x="492" y="1582" width="36" height="36" />
+        <dc:Bounds x="472" y="1582" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="474" y="1625" width="72" height="53" />
+          <dc:Bounds x="454" y="1625" width="72" height="53" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0prtgzo_di" bpmnElement="Flow_0prtgzo">
-        <di:waypoint x="528" y="1600" />
-        <di:waypoint x="626" y="1600" />
+        <di:waypoint x="508" y="1600" />
+        <di:waypoint x="540" y="1600" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Gateway_1fs8lde_di" bpmnElement="Gateway_1fs8lde" isMarkerVisible="true">
         <dc:Bounds x="1775" y="1855" width="50" height="50" />
@@ -1409,16 +1419,23 @@
         <dc:Bounds x="810" y="1560" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0r9l2kn_di" bpmnElement="Flow_0r9l2kn">
-        <di:waypoint x="701" y="1450" />
-        <di:waypoint x="751" y="1450" />
+        <di:waypoint x="740" y="1460" />
+        <di:waypoint x="786" y="1460" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Activity_07imv0u_di" bpmnElement="Activity_0wn2vqq">
-        <dc:Bounds x="601" y="1410" width="100" height="80" />
+        <dc:Bounds x="640" y="1420" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0rqr63x_di" bpmnElement="Flow_0rqr63x">
         <di:waypoint x="238" y="940" />
         <di:waypoint x="385" y="940" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_163cu3z_di" bpmnElement="Flow_163cu3z">
+        <di:waypoint x="640" y="1600" />
+        <di:waypoint x="665" y="1600" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_1fvaj2x_di" bpmnElement="Activity_1g5q2x8">
+        <dc:Bounds x="540" y="1560" width="100" height="80" />
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
