@@ -186,7 +186,7 @@
       <bpmn:incoming>Flow_0wprhat</bpmn:incoming>
       <bpmn:outgoing>Flow_010bh8h</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sendTask id="Activity_106yk7x" name="Book elctrician" camunda:asyncBefore="true" camunda:expression="${execution.getProcessEngineServices().getRuntimeService().createMessageCorrelation(&#34;bookElectrician&#34;).correlateWithResult()}">
+    <bpmn:sendTask id="Activity_106yk7x" name="Book electrician" camunda:asyncBefore="true" camunda:expression="${execution.getProcessEngineServices().getRuntimeService().createMessageCorrelation(&#34;bookElectrician&#34;).correlateWithResult()}">
       <bpmn:extensionElements>
         <camunda:properties>
           <camunda:property name="type" />
@@ -253,7 +253,7 @@
                 <camunda:entry key="Content-Type">application/json</camunda:entry>
               </camunda:map>
             </camunda:inputParameter>
-            <camunda:inputParameter name="payload">{"price" : ${Price}, "orderId" :${orderId}, "instanceID" : "${execution.getProcessInstanceId()}"}</camunda:inputParameter>
+            <camunda:inputParameter name="payload">{"price" : ${price}, "orderId" :${orderId}, "instanceID" : "${execution.getProcessInstanceId()}"}</camunda:inputParameter>
           </camunda:inputOutput>
           <camunda:connectorId>http-connector</camunda:connectorId>
         </camunda:connector>
