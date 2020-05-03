@@ -4,8 +4,7 @@
 -- Input stream
 @source(type='http', receiver.url='http://localhost:8081/pollutionDataInput', @map(type='json')) 
 @sink(type='log')
-define stream PollutionDataInput(id int, longitude double,  latitude double, datetime string, aqi double);
-
+define stream PollutionDataInput(id int, longitude double,  latitude double, datetime string, aqi int, eventType string);
 
 -- Output stream
 @sink(type='http', publisher.url ='http://127.0.0.1:8080/engine-rest/message', headers="'Host:127.0.0.1:8080'", @map(type='json', @payload("""{
@@ -42,7 +41,7 @@ define stream PollutionDataInput(id int, longitude double,  latitude double, dat
     "messageName":"{{messageName}}"
     }""")
 ))
-define stream PollutionDataOutput(id int, longitude double, latitude double, datetime string, aqi double,  level string, messageName string, eventType string);
+define stream PollutionDataOutput(id int, longitude double, latitude double, datetime string, aqi int,  level string, messageName string, eventType string);
 
 
 -- Queries

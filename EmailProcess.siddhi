@@ -1,0 +1,69 @@
+@App:name("EmailProcess")
+@App:description("Process events that should be emailed to an end user")
+
+-- Input stream
+@source(type='http', receiver.url='http://localhost:8081/emailEventInput', @map(type='json', @payload("""{
+    "processVariables": {
+        "email": {
+            "value":"{{email}}",
+            "type":"String"
+        },
+        "msg": {
+            "value":"{{msg}}",
+            "type":"String"
+        },
+        "aqiId": {
+            "value":"{{aqiId}}",
+            "type":"String"
+        },
+        "aqiLvl": {
+            "value":"{{level}}",
+            "type":"String"
+        },
+        "aqiValue" : {
+            "value": "{{aqiValue}}",
+            "type": "integer"
+    },
+    "messageName":"{{messageName}}"
+    }""")))
+@sink(type='log')
+define stream EmailEventInput(email string, msg string, aqiId string, aqiLvl string, aqiValue int);
+
+-- Output stream
+@sink(type='log')
+define stream EmailLogInfo(email string, latestMsg string, datetime string);
+
+@sink(type='email', @map(type ='json'),
+username='leakleakleak01@gmail.com',
+address='leakleakleak01@gmail.com',
+password='YoGiTea2020',
+subject='Notification message',
+to='{{email}}')
+define stream EmailSender(email string, msg string, aqiLvl string, avgAqiLvl string, aqiId string);
+
+
+@sink(type='log') 
+define stream AqiAvg(aqiId string, avgLvl double);
+
+-- Queries
+@info(name='FilterEmail')
+from EmailEventInput[aqiLvl != "low"]#window.time(1 min) as E
+    join AqiAvg
+    on AqiAvg.aqiId == E.aqiId
+select 
+    email, 
+    msg, 
+    aqiLvl,
+    str:concat(
+        ifThenElse(AqiAvg.avgLvl < 51, "low", ''),
+        ifThenElse(51 < AqiAvg.avgLvl AND AqiAvg.avgLvl < 149, "medium", ''),
+        ifThenElse(149 < AqiAvg.avgLvl, "high", '')) as avgAqiLvl,
+    E.aqiId
+group by email
+insert into EmailSender;
+
+@info(name='Average-Lvl') 
+from EmailEventInput
+select aqiId, avg(aqiValue) as avgLvl
+group by aqiId
+insert into AqiAvg;
