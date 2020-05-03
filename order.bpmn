@@ -113,7 +113,7 @@
     <bpmn:sequenceFlow id="Flow_0llf2no" sourceRef="Event_1smuuu1" targetRef="Activity_1bj1ob3" />
     <bpmn:sequenceFlow id="Flow_17yqot1" sourceRef="Activity_08ifz4e" targetRef="Event_164rdqg" />
     <bpmn:sequenceFlow id="Flow_10rh8kl" sourceRef="Activity_1lenly5" targetRef="Event_10jswj4" />
-    <bpmn:sequenceFlow id="Flow_0kvankx" name="unsuccessful previous repair atempt" sourceRef="Gateway_1ajwd8z" targetRef="Activity_1lenly5">
+    <bpmn:sequenceFlow id="Flow_0kvankx" name="unsuccessful previous repair attempt" sourceRef="Gateway_1ajwd8z" targetRef="Activity_1lenly5">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${repaired==true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_04xjmr7" sourceRef="Activity_0q7aptd" targetRef="Gateway_1kkgfik" />
