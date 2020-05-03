@@ -1,0 +1,60 @@
+@App:name("order_event")
+@App:description("Description of the plan")
+
+-- Please refer to https://docs.wso2.com/display/SP400/Quick+Start+Guide on getting started with SP editor. 
+
+@sink(type='log')
+@source(type='http', 
+receiver.url='http://localhost:8081/randomOrder', @map(type='json'))
+define stream eventInput (amount int, orderId int);
+
+@sink(type='log')
+@source(type='http', receiver.url='http://localhost:8081/bill', @map(type='json'))
+define stream billInput(price int, orderId int, instanceID string);
+
+
+@sink(type='http',
+publisher.url = 'http://127.0.0.1:8080/engine-rest/message', 
+headers = "'Host:127.0.0.1:8080'", 
+@map(type='json', @payload("""{
+"messageName" : "{{messageName}}", 
+"processVariables": {
+        "quantity": {
+            "value":{{quantity}},
+            "type":"integer"
+        },
+        "orderId" : {
+            "value" : {{orderId}},
+            "type" : "integer"
+        },
+        "price" : {
+            "value" : {{price}},
+            "type" : "integer"
+        }
+    }
+}""")))
+@sink(type='log')
+define stream MessageStream(messageName string, quantity int, price int, orderId int);
+
+@sink(type='log') 
+define stream TotalOrders(total long);
+
+@sink(type='http',publisher.url = 'http://127.0.0.1:8080/engine-rest/message', 
+headers = "'Host:127.0.0.1:8080'", 
+@map(type='json', @payload("""{"messageName" : "{{messageName}}", "processInstanceId" : "{{processInstanceID}}"}""")))
+@sink(type='log') 
+define stream PaymentStream(processInstanceID string, messageName string);
+
+from eventInput
+select 'Order_received' as messageName, amount as quantity, amount * 150 as price, orderId as orderId
+insert into MessageStream;
+
+
+from billInput [orderId % 2 == 0] #window.timeBatch(5 sec )
+select instanceID as processInstanceID, 'payment_received' as messageName
+insert into PaymentStream;
+
+from eventInput #window.time(7 day)
+select count() as total   
+insert into TotalOrders;
+
